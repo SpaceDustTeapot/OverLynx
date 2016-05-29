@@ -1,5 +1,6 @@
 package com.example.spacedust.overlynx;
 
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -70,7 +71,7 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
         Log.d("serviceHand","making serviceHandler intance");
         hand = new serviceHandler();
         Log.d("serviceHand","Making a request");
-        hand.makeRequest(nam);
+        hand.makeRequest(nam,0,null);
         parseTheJson(Chan);
 
     }
@@ -159,10 +160,23 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
         int returnedVal = v.getId();
         Log.d("V", Integer.toString(returnedVal));
         Log.d("serviceHand","calling getBoard");
+        loadBoard(returnedVal);
  //       getBoard();
         // newText.setText("WORKED!");
         //  updateRow();
         //loadChan(returnedVal);
     }
 
+    void loadBoard(int val)
+    {
+        if(bPtr < val)
+        {
+            Log.d("ERROR","SOMETHING WENT WRONG");
+        }
+        else
+        {
+            String chosenBoard = uri[val];
+            startActivity(new Intent(this,Board.class).putExtra("SelectedID",chosenBoard));
+        }
+    }
 }
