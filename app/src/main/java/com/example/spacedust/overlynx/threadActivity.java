@@ -41,6 +41,7 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
         //int SelectedID = getIntent().getIntExtra("SelectedID",0);
         String SelectedID = getIntent().getStringExtra("SelectedID");
         Chan = SelectedID;
+        domain = Chan;
         setTitle(SelectedID);
         getBoard(Chan);
 
@@ -71,7 +72,7 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
         Log.d("serviceHand","making serviceHandler intance");
         hand = new serviceHandler();
         Log.d("serviceHand","Making a request");
-        hand.makeRequest(nam,0,null);
+        hand.makeRequest(nam,0,null,null);
         parseTheJson(Chan);
 
     }
@@ -110,6 +111,7 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
         String fileLoc = fi.getPath();
        fileLoc = fileLoc + "/overlynx/";
        fileLoc = fileLoc + hand.retBoardName(Chan);
+        tldLess = hand.retBoardName(Chan);
         fileLoc = fileLoc + "/boardlist.lynx";
         Log.d("fileLoc",fileLoc);
        fi = new File(fileLoc);
@@ -132,9 +134,11 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
                     }
                     total += result;
                 }
-                String meme = new String(b, StandardCharsets.UTF_8);
+                //String meme = new String(b, StandardCharsets.UTF_8);
+                String meme = new String(b);
                 Log.d("meme",meme);
-                return new String (b, StandardCharsets.UTF_8);
+                //return new String (b, StandardCharsets.UTF_8);
+                return new String(b);
             }catch(IOException e) {
                 e.printStackTrace();
             }
@@ -145,6 +149,7 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
         return fileLoc;
     }
 
+    String domain;
     TableLayout Lay;
     String[] Boardname;
     serviceHandler hand;
@@ -152,6 +157,7 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
     String[] uri;
     String[] boardDesc;
     int bPtr;
+    String tldLess;
 
     @Override
     public void onClick(View v)
@@ -176,7 +182,8 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
         else
         {
             String chosenBoard = uri[val];
-            startActivity(new Intent(this,Board.class).putExtra("SelectedID",chosenBoard));
+            String cho = tldLess + "." + chosenBoard + "," + domain;
+            startActivity(new Intent(this,Board.class).putExtra("SelectedID",cho));
         }
     }
 }

@@ -29,7 +29,7 @@ import org.json.JSONObject;
 public class serviceHandler {
 
 
-    public void makeRequest(String link,int mode,String Board) {
+    public void makeRequest(String link,int mode,String Board,String Domain) {
         //For testing sake I use spacechan.xyz
         if(mode == 0) {
             String ActURL = "http://" + link + "/boards.js?json=1";
@@ -60,7 +60,8 @@ public class serviceHandler {
         else if(mode == 1)
         {
             //Threadmode
-            String ActURL = "http://" + link + "/"+Board +"/catalog.js";
+            String ActURL = "http://" + Domain + "/"+Board +"/catalog.json";
+            Log.d("URL",ActURL);
 
             URL url;
             HttpURLConnection urlConnection;
@@ -72,7 +73,7 @@ public class serviceHandler {
                 urlConnection = (HttpURLConnection) url.openConnection();
                 in = new BufferedInputStream(urlConnection.getInputStream());
                 //readStream(in)
-     //           CreateOverLynxDirectory();
+               CreateOverLynxDirectory();
                 //MAKES BOARD DIR
                 mkBoard(link,Board);
                 // createBoardDir("spacechan.xyz");
@@ -155,8 +156,8 @@ public class serviceHandler {
         }
         Log.d("createBoardDir",realName);
 
-        String boardLoc = StorageLoc + "/" + realName;
-        boardLoc = boardLoc + "/" + Board;
+        String boardLoc = StorageLoc;
+        boardLoc = boardLoc + "/" +name +"/" + Board;
         File fi = new File(boardLoc);
         gBoardLoc = boardLoc;
         Log.d("gBoardLoc",gBoardLoc);
