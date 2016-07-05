@@ -1,6 +1,5 @@
 package com.example.spacedust.overlynx;
 
-import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,39 +17,29 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
-public class Board extends AppCompatActivity implements View.OnClickListener {
+public class MainPosts extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_board);
-        msg = new String[1000];
-        threadId = new int[1000];
-        postCount = new int[1000];
-        fileCount = new int[1000];
-        subject = new String[1000];
-        locked = new boolean[1000];
-        pinned = new boolean[1000];
-        cyclic = new boolean[1000];
-        thumb = new String[1000];
-        autoSage = new boolean[1000];
+        setContentView(R.layout.activity_main_posts);
         setUp();
 
     }
 
     void setUp()
     {
-        Log.d("WHY NOT WORKING?","MEME");
-        Lay = (TableLayout) findViewById(R.id.board);
+        Lay = (TableLayout) findViewById(R.id.posts);
         //int SelectedID = getIntent().getIntExtra("SelectedID",0);
         String SelectedID = getIntent().getStringExtra("SelectedID");
-        Chan = SelectedID;
-        getChanAndBo(Chan);
-        setTitle("/"+Bor+"/");
-        getBoard(Chan,Bor);
+        //Chan = SelectedID;
+        //domain = Chan;
+        splice(SelectedID);
+        String title = Chan + " /" + Bor + "/" + " - ID " + thri;
+        setTitle(title);
+        getBoard(Chan,Bor,thri);
+        Log.d("Parse",msg);
 
         for(int i =0;i<=bPtr;i++)
         {
@@ -61,51 +50,29 @@ public class Board extends AppCompatActivity implements View.OnClickListener {
             row.setLayoutParams(lp);
             TextView entry = new TextView(this);
             //build text
-           // String Bldstring = "/" + uri[i] + "/ -" + Boardname[i];
-            entry.setText(msg[i]);
-            Log.d("text",msg[i]);
+          //  String Bldstring = "/" + uri[i] + "/ -" + Boardname[i];
+            //entry.setText(Bldstring);
             entry.setTextSize(20.f);
             entry.setPadding(entry.getPaddingLeft(), 5, entry.getPaddingRight(), 15);
-            //row.setId(i);
-            row.setId(threadId[i]);
+            row.setId(i);
             row.setOnClickListener(this);
             row.addView(entry);
             Lay.addView(row);
 
-            //add BReakline textview;
-            TextView br = new TextView(this);
-            br.setText("-------------------------");
-            br.setTextSize(20.f);
-            br.setPadding(entry.getPaddingLeft(), 5, entry.getPaddingRight(), 15);
-            row = new TableRow(this);
-            row.setLayoutParams(lp);
-            row.addView(br);
-            row.setId(-31233);
-            Lay.addView(row);
-
         }
-        //TableLayout.addview("Testing!");
     }
-    String dom;
-    TableLayout Lay;
-    String Chan;
-    String SelectedId;
-    String Bor;
-    serviceHandler hand;
-    String[] msg;
-    int[] threadId;
-    int[] postCount;
-    int[] fileCount;
-    String[] subject;
-    boolean[] locked;
-    boolean[] pinned;
-    boolean[] cyclic;
-    String[] thumb;
-   // Date[] date; ?
-    boolean[] autoSage;
-    int bPtr;
 
-    void getChanAndBo(String longString)
+    void getBoard(String nam,String bo,String th)
+    {
+        Log.d("serviceHand","making serviceHandler intance");
+        hand = new serviceHandler();
+        Log.d("serviceHand","Making a request");
+        hand.makeRequest(nam,2,bo,dom,th);
+        parseTheJson(Chan);
+
+    }
+
+    void splice(String longString)
     {
         int len = longString.length();
 
@@ -125,22 +92,23 @@ public class Board extends AppCompatActivity implements View.OnClickListener {
                     if(flag2 == false && new String(",").equals(temp2))
                     {
                         Bor = longString.substring(i + 1, k);
-                        dom = longString.substring(k + 1, len);
+                      //  dom = longString.substring(k + 1, len);
+                        boolean flag3 =false;
                         flag2 = true;
+                        for(int l =0;l<len; l++)
+                        {
+                            String temp3 = longString.substring(l,l+1);
+                            if(flag3 == false && new String("]").equals(temp3))
+                            {
+                                dom = longString.substring(k+1,l);
+                                thri = longString.substring(l+1,len);
+                                flag3 = true;
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-
-    void getBoard(String nam,String bo)
-    {
-        Log.d("serviceHand","making serviceHandler intance");
-        hand = new serviceHandler();
-        Log.d("serviceHand","Making a request");
-        hand.makeRequest(nam,1,bo,dom,null);
-        parseTheJson(Chan);
-
     }
 
     public void parseTheJson(String chanName)
@@ -148,31 +116,36 @@ public class Board extends AppCompatActivity implements View.OnClickListener {
         //   Scanner scan
         String toBeParsed =  ScanFile();
         // readFileToString();
-
+        Log.d("parse the json","Beforetry");
+        Log.d("parsed texfile",toBeParsed);
         try {
-         //   JSONObject Board = new JSONObject(toBeParsed);
+            //   JSONObject Board = new JSONObject(toBeParsed);
             //JSONArray jasonArray =  Board.optJSONArray("");
-             JSONArray jasonArray = new JSONArray(toBeParsed);
+            Log.d("in try","t");
+            JSONArray jasonArray = new JSONArray(toBeParsed);
+            Log.d("JSONobjectcreation","reeeee");
             for(int i=0; i<jasonArray.length();i++)
             {
+                Log.d("parse the json","in loop");
                 JSONObject jsonObject = jasonArray.getJSONObject(i);
                 bPtr = i;
-             //   uri[i] = jsonObject.optString("boardUri").toString();
-              //  Boardname[i] = jsonObject.optString("boardName").toString();
-              //  boardDesc[i] = jsonObject.optString("boardDescription").toString();
+                //   uri[i] = jsonObject.optString("boardUri").toString();
+                //  Boardname[i] = jsonObject.optString("boardName").toString();
+                //  boardDesc[i] = jsonObject.optString("boardDescription").toString();
 
-                msg[i] = jsonObject.optString("message");
-                threadId[i] = jsonObject.optInt("threadId");
-                postCount[i] = jsonObject.optInt("postCount");
-                fileCount[i] = jsonObject.optInt("fileCount");
-                subject[i] = jsonObject.optString("subject").toString();
-                locked[i] = jsonObject.optBoolean("locked");
-                pinned[i] = jsonObject.optBoolean("pinned");
-                cyclic[i] = jsonObject.optBoolean("cyclic");
-                thumb[i] = jsonObject.optString("thumb").toString();
-                autoSage[i] = jsonObject.optBoolean("autosage");
+                msg = jsonObject.optString("message");
+                threadId = jsonObject.optInt("threadId");
+            //    postCount[i] = jsonObject.optInt("postCount");
+            //    fileCount[i] = jsonObject.optInt("fileCount");
+                subject = jsonObject.optString("subject").toString();
+                locked = jsonObject.optBoolean("locked");
+                pinned = jsonObject.optBoolean("pinned");
+           //     cyclic[i] = jsonObject.optBoolean("cyclic");
+           //     thumb[i] = jsonObject.optString("thumb").toString();
+                autoSage = jsonObject.optBoolean("autosage");
             }
 
+            Log.d("parseTest",msg);
         }catch(JSONException e)
         {
 
@@ -182,14 +155,13 @@ public class Board extends AppCompatActivity implements View.OnClickListener {
 
     String ScanFile()
     {
-        Log.d("SCANFILE","IN SCAN FILE");
         File fi = Environment.getExternalStorageDirectory();
         Log.d("CHAN",Chan);
         String fileLoc = fi.getPath();
         fileLoc = fileLoc + "/overlynx/";
-    //    fileLoc = fileLoc + hand.retBoardName(Chan);
-        fileLoc = fileLoc + Chan + "/" + Bor;
-        fileLoc = fileLoc + "/threadlist.lynx";
+        fileLoc = fileLoc + hand.retBoardName(Chan);
+        tldLess = hand.retBoardName(Chan);
+        fileLoc = fileLoc + Chan+"/" +Bor +"/"+thri +"/threadlist.lynx";
         Log.d("fileLoc",fileLoc);
         fi = new File(fileLoc);
         Log.d("fi",Boolean.toString(fi.exists()));
@@ -211,10 +183,10 @@ public class Board extends AppCompatActivity implements View.OnClickListener {
                     }
                     total += result;
                 }
-            //    String meme = new String(b, StandardCharsets.UTF_8);
+                //String meme = new String(b, StandardCharsets.UTF_8);
                 String meme = new String(b);
                 Log.d("meme",meme);
-               // return new String (b, StandardCharsets.UTF_8);
+                //return new String (b, StandardCharsets.UTF_8);
                 return new String(b);
             }catch(IOException e) {
                 e.printStackTrace();
@@ -232,37 +204,51 @@ public class Board extends AppCompatActivity implements View.OnClickListener {
         Log.d("Onclick", "CALLBACK WORKS!");
         int returnedVal = v.getId();
         Log.d("V", Integer.toString(returnedVal));
-        Log.d("serviceHand","calling getThread");
-      //  loadBoard(returnedVal);
+        Log.d("serviceHand","calling getBoard");
+        //  loadBoard(returnedVal);
         //       getBoard();
         // newText.setText("WORKED!");
         //  updateRow();
         //loadChan(returnedVal);
-        loadThread(returnedVal);
     }
 
-    public void loadThread(int id)
-    {
-       //find thread
-        boolean FoundThread = false;
-        for(int i =0; i<=bPtr;i++)
-        {
-            if(threadId[i] == id)
-            {
-                FoundThread = true;
+    //Somce this is op no need for an array
+    String domain;
+    TableLayout Lay;
+    String Boardname;
+    serviceHandler hand;
+    String Chan;
+    String uri;
+    String dom;
+    String Bor;
+    String thri;
 
-            }
-            Log.d("Rtread",Integer.toString(threadId[i]));
-            Log.d("aTread",Integer.toString(id));
+    String banMessage;
+    //string or int?
+    String signedRole;
+    String id;
+    String email;
+    String flag;
+    int threadId;
+    String subject;
+    String lastEditLogin;
+    String msg;
+    String name;
+    boolean autoSage;
+    boolean locked;
+    boolean cylic;
+    boolean pinned;
 
-        }
 
-        if(FoundThread)
-        {
-            //load mainposts
-            String cho = Chan + "." + Bor + "," + dom+"]" + id;
-            startActivity(new Intent(this,MainPosts.class).putExtra("SelectedID",cho));
+    String[] boardDesc;
+    int bPtr;
+    String tldLess;
 
-        }
-    }
+    //op files
+    String[] opOriginalName;
+    String[] opPath;
+    String[] opThumb;
+    int[] opSize;
+    
+
 }

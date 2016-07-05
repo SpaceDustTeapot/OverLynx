@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ public class mainMenu extends AppCompatActivity implements View.OnClickListener 
     void setUp()
     {
         loadChanList();
+        ScrollView scroll = (ScrollView) findViewById(R.id.sites);
         Lay = (TableLayout) findViewById(R.id.Main);
         for(int i=0;i<chanListPtr;i++)
         {
@@ -39,6 +41,8 @@ public class mainMenu extends AppCompatActivity implements View.OnClickListener 
             row.setOnClickListener(this);
             row.addView(entry);
             Lay.addView(row);
+           // scroll.addView(row);
+           // Lay.addView(scroll);
         }
 
         //TableLayout.addview("Testing!");

@@ -72,7 +72,7 @@ public class threadActivity extends AppCompatActivity implements View.OnClickLis
         Log.d("serviceHand","making serviceHandler intance");
         hand = new serviceHandler();
         Log.d("serviceHand","Making a request");
-        hand.makeRequest(nam,0,null,null);
+        hand.makeRequest(nam,0,null,null,null);
         parseTheJson(Chan);
 
     }
